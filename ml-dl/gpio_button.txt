@@ -1,0 +1,12 @@
+# https://projects.raspberrypi.org/en/projects/physical-computing/5
+# sudo nano gpio_button.py
+
+from gpiozero import Button
+import os
+button = Button(2)
+button.wait_for_press()
+print('You pushed me')
+os.system("sudo shutdown -h now")
+
+# sudo crontab -e
+# @reboot python3 /home/umbrel/gpio_button.py

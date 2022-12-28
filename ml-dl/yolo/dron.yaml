@@ -1,0 +1,7 @@
+train: /content/drive/MyDrive/database/images/train
+val: /content/drive/MyDrive/database/images/valid
+test: /content/drive/MyDrive/database/images/test
+ 
+# Classes
+nc: 1  # number of classes
+names: ['dron']  # class names

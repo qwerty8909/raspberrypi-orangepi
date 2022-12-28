@@ -1,0 +1,44 @@
+# на диске папка с датасетом database (labels,images--valid,train,test)
+# выбираем среду GPU
+# подключаем диск с папкой датасета
+# в папку yolov7/data копируем dron.yaml
+# в папку yolov7/cfg/training копируем yolov7_dron-tiny.yaml
+
+
+# качаем с гита
+!git clone https://github.com/WongKinYiu/yolov7.git
+
+# заходим в скачаную папку
+%cd yolov7
+
+# устанавливаем зависимости
+!pip install -r requirements.txt
+
+# скачиваем весы здесь: https://github.com/WongKinYiu/yolov7/releases
+!wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt
+
+# обучаем # если нужно на разных разрешениях multi-scale
+!python train.py --epochs 100 --workers 4 --device 0 --batch-size 32 \
+--data /content/yolov7/data/dron.yaml --img 640 640 --cfg /content/yolov7/cfg/training/yolov7_dron-tiny.yaml \
+--weights 'yolov7-tiny.pt' --name yolov7_tiny_dron_fixed_res --hyp /content/yolov7/data/hyp.scratch.tiny.yaml \
+--multi-scale
+
+# забираем файл best.pt и кладем у себя в корень YOLOV7 это и есть модель
+# путь /content/yolov7/runs/train/yolov7_tiny_dron_fixed_res/weights/best.pt
+
+# у себя качаем yolov7 и в папку YOLOV7
+https://github.com/WongKinYiu/yolov7
+
+# в Anaconda Promt под админом
+cd C:\Users\vitalii\Downloads\YOLOV7
+conda create -n yolov7 python=3.9
+conda activate yolov7
+pip install -r requirements.txt
+
+# в корень YOLOV7 кладем фото или видео и смотрим как обучили по адресу YOLOV7\runs\detect\exp
+python detect.py --weights best.pt --conf 0.4 --img-size 640 --source 1.jpg
+
+# готово!!!
+
+# в колабе копируем результат обучения в гуглдиск
+%cp -av /content/yolov7/runs/train /content/drive/MyDrive

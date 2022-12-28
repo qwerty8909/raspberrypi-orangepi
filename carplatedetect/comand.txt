@@ -1,0 +1,33 @@
+pip install opencv-contrib-python
+pip install protobuf==4.21.2
+pip install torch==1.11.0
+pip install torchvision==0.12.0
+ls /dev/video*
+python3 detect.py --weights yolov7_tiny_dron.pt --source dron_fly.mp4
+
+pip install gosnomer
+pip install RPi.GPIO
+pip install gpiozero
+sudo apt-get install tesseract-ocr
+pip install pytesseract
+sudo apt install tesseract-ocr-rus
+
+
+@reboot python3 /home/pi/project/gpio_button.py
+@reboot /home/pi/project/env/bin/python3 /home/pi/project/alpr_haar.py
+
+
+
+pip install OPi.GPIO
+pip install gpio4
+https://github.com/orangepi-xunlong/wiringOP
+https://github.com/orangepi-xunlong/wiringOP-Python
+gpio readall
+
+WiringOP на Orange Pi + Python
+https://www.ics.com/blog/gpio-programming-using-sysfs-interface
+
+
+echo 35 >/sys/class/gpio/export
+echo in >/sys/class/gpio/gpio35/direction
+echo 0 >/sys/class/gpio/gpio35/value
