@@ -2,13 +2,14 @@ import os
 import cv2
 import pytesseract
 import pandas as pd
+import numpy as np
 from gosnomer import normalize
 from time import sleep
 from datetime import datetime
 
 # пин 13
 os.system("echo 35 >/sys/class/gpio/export")
-os.system("echo 0 >/sys/class/gpio/gpio35/value")
+os.system("echo in >/sys/class/gpio/gpio35/direction")
 # путь к базе номеров
 base = pd.read_csv('/home/orangepi/project/base.txt', header=None)
 base = base.iloc[:,0]
@@ -17,9 +18,11 @@ carplate_cascade = cv2.CascadeClassifier('/home/orangepi/project/haarcascade_rus
 
 # функция индикации
 def gate_open ():
-    os.system("echo 1 >/sys/class/gpio/gpio35/value")
+    os.system("echo out >/sys/class/gpio/gpio35/direction")
     sleep(1.5)
-    os.system("echo 0 >/sys/class/gpio/gpio35/value")
+    os.system("echo in >/sys/class/gpio/gpio35/direction")
+    sleep(1.5)
+    os.system('sudo reboot now')
 
 # функция распознавания
 def detect_features(frame):
@@ -36,9 +39,20 @@ def detect_features(frame):
         # список для распознанных номеров
         list_text = []
         # получили первое изображение номера
-        carplate = gray[y+15:y+h-10, x+15:x+w-20]
+        carplate_a = gray[y+3:y+h-2, x+3:x+w-4]
+
+        # трансформируем номер в прямоугольник
+        # Define the 4 points for the perspective transformation
+        src_points = np.float32([[0, 0], [w, 0], [w, h], [0, h]])
+        dst_points = np.float32([[0, 0], [w, -3], [w, h + 6], [0, h]])
+        # Get the perspective transformation matrix
+        transformation_matrix = cv2.getPerspectiveTransform(src_points, dst_points)
+        # Apply the perspective transformation to the license plate
+        carplate = cv2.warpPerspective(carplate_a, transformation_matrix, (w, h))
+
         # номер авто в png
-#        cv2.imwrite('carplate'+str(cap)+'.png', carplate)
+        cv2.imwrite('/home/orangepi/project/carplate_a'+timestr+'.png', carplate_a)
+        cv2.imwrite('/home/orangepi/project/carplate'+timestr+'.png', carplate)
         # номер увеличиваем в 2 раза, применяем несколько фильтров, получаем второе изображение номера
         resize_plate = cv2.resize(carplate, None , fx = 2 , fy = 2 ,interpolation = cv2.INTER_CUBIC)
         gauss = cv2.GaussianBlur(resize_plate, ( 5 , 5 ), 0 )
