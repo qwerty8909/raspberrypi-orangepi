@@ -53,8 +53,8 @@ def detect_features(frame):
         carplate = cv2.warpPerspective(carplate_a, transformation_matrix, (w, h))
 
         # номер авто в png
-        cv2.imwrite('/home/orangepi/project/carplate_a' + timestr + '.png', carplate_a)
-        cv2.imwrite('/home/orangepi/project/carplate' + timestr + '.png', carplate)
+        cv2.imwrite('/home/orangepi/project/carplate_a' + datetime.utcnow().strftime("%d%H%M%S") + '.png', carplate_a)
+        cv2.imwrite('/home/orangepi/project/carplate' + datetime.utcnow().strftime("%d%H%M%S") + '.png', carplate)
         # номер увеличиваем в 2 раза, применяем несколько фильтров, получаем второе изображение номера
         resize_plate = cv2.resize(carplate, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
         gauss = cv2.GaussianBlur(resize_plate, (5, 5), 0)
